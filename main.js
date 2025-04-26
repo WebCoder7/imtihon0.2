@@ -3,30 +3,49 @@ const postForm = document.getElementById('postForm');
 const titleInput = document.getElementById('titleInput');
 const bodyInput = document.getElementById('bodyInput');
 
+// Skeletonlarni korinishi ////////////////
 function showSkeletons(count) {
+  postsContainer.innerHTML = '';
   for (let i = 0; i < count; i++) {
-    const skeleton = document.createElement('div');
-    skeleton.className = 'skeleton';
-    postsContainer.appendChild(skeleton);
+    const skeletonCard = document.createElement('div');
+    skeletonCard.className = 'card skeleton-card';
+
+    const skeletonTitle = document.createElement('div');
+    skeletonTitle.className = 'skeleton skeleton-title';
+    skeletonCard.appendChild(skeletonTitle);
+
+    const skeletonBody = document.createElement('div');
+    skeletonBody.className = 'skeleton skeleton-body';
+    skeletonCard.appendChild(skeletonBody);
+
+    const skeletonButton = document.createElement('div');
+    skeletonButton.className = 'skeleton skeleton-button';
+    skeletonCard.appendChild(skeletonButton);
+
+    postsContainer.appendChild(skeletonCard);
   }
 }
 
+// Skeletonlarini oxhirishh /////////////
 function removeSkeletons() {
-  const skeletons = document.querySelectorAll('.skeleton');
-  skeletons.forEach((skeleton) => skeleton.remove());
+  const skeletonCards = document.querySelectorAll('.skeleton-card');
+  skeletonCards.forEach((card) => card.remove());
 }
 
 async function fetchPosts() {
   try {
     showSkeletons(5);
     const response = await fetch(
-      'https://jsonplaceholder.typicode.com/posts?_limit=10' // apidan 10doma malumot olish uchin qoydim
+      'https://jsonplaceholder.typicode.com/posts?_limit=10' // apidan faqat 10ta malumotni olish //////
     );
+    if (!response.ok) throw new Error('Serverda xatolik');
     const posts = await response.json();
     removeSkeletons();
     renderPosts(posts);
   } catch (error) {
+    removeSkeletons();
     console.error('Xatolik:', error);
+    alert('Postlarni yuklab bo‘lmadi');
   }
 }
 
@@ -36,6 +55,7 @@ function renderPosts(posts) {
   });
 }
 
+// Yagi malumotlar qoshish inputorqali ///////////////////
 function createPost(post, fromForm = true) {
   const card = document.createElement('div');
   card.className = 'card';
@@ -51,19 +71,13 @@ function createPost(post, fromForm = true) {
   const deleteBtn = document.createElement('button');
   deleteBtn.className = 'button';
   deleteBtn.textContent = 'Ochirib tashlash';
-  deleteBtn.addEventListener('click', () => {
-    card.remove();
-  });
+  deleteBtn.addEventListener('click', () => card.remove());
 
   card.appendChild(title);
   card.appendChild(body);
   card.appendChild(deleteBtn);
 
-  if (fromForm) {
-    postsContainer.prepend(card);
-  } else {
-    postsContainer.appendChild(card);
-  }
+  fromForm ? postsContainer.prepend(card) : postsContainer.appendChild(card);
 }
 
 postForm.addEventListener('submit', (e) => {
@@ -74,11 +88,14 @@ postForm.addEventListener('submit', (e) => {
     body: bodyInput.value.trim(),
   };
 
-  if (newPost.title && newPost.body) {
-    createPost(newPost);
-    titleInput.value = '';
-    bodyInput.value = '';
+  if (!newPost.title || !newPost.body) {
+    alert('Iltimos, barcha maydonlarni to‘ldiring!');
+    return;
   }
+
+  createPost(newPost);
+  titleInput.value = '';
+  bodyInput.value = '';
 });
 
 fetchPosts();
