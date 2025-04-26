@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Imtihon 0.2</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Postlar</h1>
+
+      <form id="postForm" class="postForm">
+        <input
+          type="text"
+          id="titleInput"
+          placeholder="Title qoshing..."
+          required
+        />
+        <textarea
+          id="bodyInput"
+          placeholder="Descriptinon qoshingg.."
+          required
+        ></textarea>
+        <button type="submit">Qoshish</button>
+      </form>
+
+      <div id="container" class="postContainer"></div>
+    </div>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
